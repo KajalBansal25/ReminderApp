@@ -5,6 +5,8 @@ import {FAB} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {PlusIcon} from '../../images/svgs';
+
 const HomeScreen = () => {
   const [list, setList] = useState([]);
   const navigation = useNavigation();
@@ -58,7 +60,11 @@ const HomeScreen = () => {
           keyExtractor={item => item.id}
         />
       </View>
-      <FAB icon="plus" style={styles.fab} onPress={handleNavigate} />
+      <FAB
+        icon={() => <PlusIcon />}
+        style={styles.fab}
+        onPress={handleNavigate}
+      />
     </View>
   );
 };
@@ -75,11 +81,17 @@ const styles = StyleSheet.create({
   itemView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
     alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: {height: 2, width: 0},
+    elevation: 3,
   },
   text: {color: 'black'},
 });

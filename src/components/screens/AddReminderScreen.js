@@ -16,6 +16,7 @@ export const AddReminderScreen = ({navigation, route}) => {
   const [reminderName, setReminderName] = useState('');
   const [time, setTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const {addListItem = () => {}} = route.params;
 
   const addNewItemHandler = async () => {
@@ -32,17 +33,16 @@ export const AddReminderScreen = ({navigation, route}) => {
       };
       addListItem(newItem);
 
-      const notificationTime = new Date();
-      notificationTime.setHours(time.getHours());
-      notificationTime.setMinutes(time.getMinutes());
-      notificationTime.setSeconds(0);
-      notificationTime.setMilliseconds(0);
+      time.setHours(time.getHours());
+      time.setMinutes(time.getMinutes());
+      time.setSeconds(0);
+      time.setMilliseconds(0);
 
       PushNotification.localNotificationSchedule({
         channelId: 'reminder-channel',
         title: 'Reminder',
         message: reminderName,
-        date: notificationTime,
+        date: time,
         allowWhileIdle: true,
         vibrate: true,
         soundName: 'default',
@@ -69,16 +69,23 @@ export const AddReminderScreen = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <View style={styles.addItemContainer}>
-        <View style={styles.textInputView}>
+        <View
+          style={[
+            styles.textInputView,
+            isFocused && styles.inputContainerFocused,
+          ]}>
           <TextInput
             onChangeText={setReminderName}
             value={reminderName}
             placeholder="Reminder name"
             style={styles.text}
+            placeholderTextColor="grey"
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
           />
         </View>
         <TouchableOpacity onPress={showTimePickerModal} style={styles.btn}>
-          <Text style={styles.text}>{`${time
+          <Text style={styles.btnText}>{`${time
             .getHours()
             .toString()
             .padStart(2, '0')}:${time
@@ -113,8 +120,35 @@ export const AddReminderScreen = ({navigation, route}) => {
 const styles = StyleSheet.create({
   container: {flex: 1, margin: 12, marginTop: 16},
   addItemContainer: {flex: 1, gap: 16},
-  textInputView: {borderWidth: 1, borderRadius: 12},
-  btn: {borderWidth: 1, borderRadius: 12, padding: 12},
+  textInputView: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 25,
+    backgroundColor: '#F0F0F0',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    marginBottom: 16,
+  },
+  inputContainerFocused: {
+    borderColor: '#007AFF',
+  },
+  btn: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: {height: 2, width: 0},
+  },
+  btnText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+  },
   text: {color: 'black'},
   addNewItemBtn: {
     borderRadius: 12,
